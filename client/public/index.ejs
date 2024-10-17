@@ -1,57 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <script src="https://kit.fontawesome.com/4026a653d4.js" crossorigin="anonymous"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Itim&display=swap" rel="stylesheet">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
+  <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <script
+      src="https://kit.fontawesome.com/4026a653d4.js"
+      crossorigin="anonymous"
+    ></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Itim&display=swap"
+      rel="stylesheet"
+    />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
     <title>Office Modules</title>
-</head>
-<body>
+  </head>
+  <body>
     <!-- top header/banner -->
-     <header id="header" class="banner header-banner banner-header">
-        <h1 class="header-title title-header hidden">Office Modules</h1>
-     </header>
+    <header id="header" class="banner header-banner banner-header">
+      <h1 class="header-title title-header hidden">Office Modules</h1>
+    </header>
 
-     <!-- modules -->
-     <section id="modules" class="module-wrapper wrapper-module mod-wrapper wrapper-mod">
-        <ul class="modules-container">
-            <li class="modules-list-item">
-                <!-- name -->
-                 <h3 class="module-name name-module">Calculator</h3>
-                 <a class="btn-article" href="#">
-                    <div class="btn-container">
-                        <i class="fa-solid fa-play fl-right"></i>
-                     </div>
-                 </a>
-            </li>
-            <li class="modules-list-item">
-                <!-- name -->
-                 <h3 class="module-name name-module">Notepad</h3>
-                 <a class="btn-article" href="#">
-                    <div class="btn-container">
-                        <i class="fa-solid fa-play fl-right"></i>
-                     </div>
-                 </a>
-            </li>
-            <li class="modules-list-item">
-                <!-- name -->
-                 <h3 class="module-name name-module">Chatroom</h3>
-                 <a class="btn-article" href="#">
-                    <div class="btn-container">
-                        <i class="fa-solid fa-play fl-right"></i>
-                     </div>
-                 </a>
-            </li>
-        </ul>
-            <img class="prev-img hide-prev" width='50%'>
-        <!-- <div id="preview" class="preview-container container-preview">
+    <!-- modules -->
+    <section
+      id="modules"
+      class="module-wrapper wrapper-module mod-wrapper wrapper-mod"
+    >
+      <ul class="modules-container">
+        <li class="modules-list-item">
+          <!-- name -->
+          <h3 class="module-name name-module">Calculator</h3>
+          <span class="arrow direction arrow-dir dir-arrow">
+            <div class="arrow-head"></div>
+          </span>
+          <a class="btn-article" href="#">
+            <div class="btn-container">
+              <i class="fa-solid fa-play fl-right"></i>
+            </div>
+          </a>
+        </li>
+        <li class="modules-list-item">
+          <!-- name -->
+          <h3 class="module-name name-module">Notepad</h3>
+          <span class="arrow direction arrow-dir dir-arrow">
+            <div class="arrow-head"></div>
+          </span>
+          <a class="btn-article" href="#">
+            <div class="btn-container">
+              <i class="fa-solid fa-play fl-right"></i>
+            </div>
+          </a>
+        </li>
+        <li class="modules-list-item">
+          <!-- name -->
+          <h3 class="module-name name-module">Chatroom</h3>
+          <span class="arrow direction arrow-dir dir-arrow">
+            <div class="arrow-head"></div>
+          </span>
+          <a class="btn-article" href="#">
+            <div class="btn-container">
+              <i class="fa-solid fa-play fl-right"></i>
+            </div>
+          </a>
+        </li>
+      </ul>
+      <div id="message" class="show-prev-msg">
+        <h1>Office Modules</h1>
+        <p>choose from a select list of modules to interact with</p>
+      </div>
+      <img class="prev-img hide-prev" width="50%" />
+      <!-- <div id="preview" class="preview-container container-preview">
             <img class="prev-img hide-prev" src="" width='50%'>
         </div> -->
-     </section>
-     <script src="main.js"></script>
-</body>
+    </section>
+    <script src="main.js"></script>
+  </body>
 </html>
