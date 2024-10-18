@@ -1,0 +1,314 @@
+<script>
+  // fetch docker api
+  // fetch('/numbers')
+  //   .then((r) => r.json())
+  //   .then((d) => console.log(d.numbers));
+
+  let socket = io();
+
+  // fetch profile photo by name
+  const getProfilePhoto = async (url) => {
+    let response = await fetch("/char/photo")
+      .then((r) => r.json())
+      .then((d) => d.icon);
+    return response;
+  };
+  let photo = getProfilePhoto("/char/photo");
+  
+  // declare form & text-input
+  let form = document.getElementById("form");
+  let text = document.getElementById("text");
+  let submit = document.getElementById("submit");
+  let chatbox = document.getElementById("chats");
+  let header = document.querySelector("#room-header>em");
+  let keyboard = document.querySelector("svg#type-keyboard");
+  let typing = false;
+  let timeout = undefined;
+  let typingarr = document.getElementById("typing-users");
+  let leavingarr = document.getElementById("leaving-users");
+
+  // fix typing array (typing indicator)\
+  if(window.innerWidth <= 650){
+    typingarr.style.top = text.getBoundingClientRect().y - (text.clientHeight-5) + "px";
+    leavingarr.style.top = text.getBoundingClientRect().y - (text.clientHeight-5) + "px";
+    leavingarr.style.right = 30 + 'px'
+  } else {
+    typingarr.style.bottom = text.clientHeight + 20 + "px";
+    leavingarr.style.bottom = text.clientHeight + 35 + "px";
+    leavingarr.style.right = 30 + 'px'
+  }
+
+
+  // ejs rendered variable
+  const roomname = "<%= room %>";
+
+  socket.on("connect", function () {
+    // welcome message
+    // client sends request to server
+    socket.emit("welcome", roomname);
+    socket.emit("join_room", roomname);
+  });
+
+  // show room header
+  window.onload = async (e) => {
+    // focus text
+    text.focus();
+    // send scrollbar to the last chat message + a margin
+    setTimeout(
+      () => chatbox.scrollTo(0, chatbox.scrollHeight - chatbox.clientHeight),
+      250
+    );
+
+    let mainheader = header.parentElement;
+    mainheader.classList.toggle("appear-header");
+
+    // retrieve user's name from socket
+    socket.on("get_name", async (user) => {
+      // fetch for existing chats & append to chatbox
+      // get existing messages
+      let chats = await fetch(`/${roomname}/sec/messages`)
+        .then((r) => r.json())
+        .then((d) => {
+          console.log(d)
+          if (d.messages !== "no messages") {
+            let messages = [...d.messages];
+            messages.map((msg, index) => {
+              sameSender = msg["sender"] === user.name;
+              let photo = msg["icon"];
+              let timestamp = msg['timestamp']
+              // let offset = Math.floor(new Date(timestamp).getTimezoneOffset() / 60) * (60*60*1000);
+              // let newdate = timestamp - offset
+              let localdate = new Date(timestamp).toISOString()
+              let current_time = localdate.split('T')[1].match(/\d+:\d+:\d+/g).join``
+              let li = document.createElement("li");
+              let img = document.createElement("img");
+              let time = document.createElement('time');
+              let n = document.createElement('text')
+                  n.classList.add('text-name')
+                  n.textContent = msg["sender"];
+              time.datetime = current_time;
+              time.textContent = current_time;
+              time.classList.add('time-piece')
+              time.classList.add(!sameSender ? 'tp-left' : 'tp-right')
+              img.height = "45";
+              img.width = "45";
+              img.style = "border-radius:50%";
+              img.src = `../../../media/${photo}`;
+              img.classList.add('img-margin');
+              li.append(time)
+              let p = document.createElement("p");
+              p.onclick=e=>{time.classList.add('time-piece-hover')
+              p.classList.add('p-lower')
+              n.classList.add('p-lower')
+              }
+              p.ontouchstart=e=>{time.classList.add('time-piece-hover')
+              p.classList.add('p-lower')
+              n.classList.add('p-lower')
+              }
+              p.onmouseout=e=>{time.classList.remove('time-piece-hover')
+              p.classList.remove('p-lower')
+              n.classList.remove('p-lower')
+              }
+              window.ontouchstart = e => {
+                time.classList.remove('time-piece-hover')
+              p.classList.remove('p-lower')
+              n.classList.remove('p-lower')
+              }
+              li.classList.add("list-item");
+              li.classList.add('no-select')
+              li.appendChild(p);
+                if(!sameSender){
+                  li.classList.add("left")
+                  p.classList.add("p-left")
+                  n.classList.add('tp-left')
+                }
+                else{
+                  p.classList.add("p-right");
+                  li.classList.add("right");
+                  n.classList.add('tp-right')
+                }
+              p.textContent = msg.message;
+              chatbox.appendChild(li);
+              li.appendChild(img);
+              li.appendChild(n)
+            });
+          }
+        });
+    });
+  };
+
+  let userGone;
+  // user leaves chat
+  const leaveBtn = document.querySelector('#home-btn>a')
+  const logoutBtn = document.querySelector('#logout-btn>a')
+  leaveBtn.onclick = e => { 
+    socket.emit('user_leaves',roomname);
+  }
+  logoutBtn.onclick = e => { 
+    socket.emit('user_leaves',roomname);
+  }
+
+  
+  // server displays who left to all other sockets
+  let names = [];
+  socket.on('user_leaves_out',name => {
+    clearTimeout(userGone)
+    userGone = setTimeout(()=>{
+      leavingarr.children[0].textContent = ''
+      names = [];
+    },1750)
+    if (names.indexOf(name) == -1) {
+        names.push(name);
+        // console.log(names);
+      }
+    leavingarr.children[0].textContent =
+        names.length > 0 && names.length < 2
+          ? [...names].join("") + " left the room..."
+          : names.length > 1 && names.length < 3
+          ? [...names].join(" and ") + " left the room..."
+          : [...names]
+              .map((n, i) => (i == names.length - 1 ? "and " + n : n))
+              .join(", ") + " left the room...";
+  })
+  // user is typing to the server
+  text.onkeypress = (e) => {
+  
+    if (e.which != 13) {
+      typing = true;
+      socket.emit("typing", roomname);
+      socket.emit("keyboard", typing, roomname);
+      
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        typing = false;
+        socket.emit("typing", roomname);
+        socket.emit("keyboard", typing, roomname);
+        typingarr.children[0].textContent=''
+      }, 3000);
+    }
+    let names = [];
+    socket.on("typing", (name) => {
+      if (names.indexOf(name) == -1) {
+        names.push(name);
+      }
+      // set paragraph textcontent to the updated names array
+      typingarr.children[0].textContent =
+        names.length > 0 && names.length < 2
+          ? [...names].join("") + " is typing..."
+          : names.length > 1 && names.length < 3
+          ? [...names].join(" and ") + " are typing..."
+          : [...names]
+              .map((n, i) => (i == names.length - 1 ? "and " + n : n))
+              .join(", ") + " are typing...";
+    });
+    // keyboard display/user typing
+    socket.on("keyboard", (bool, name) => {
+      let index = [...names].indexOf(name);
+      if (bool == true) {
+        typingarr.children[0].classList.remove("user-hide");
+        typingarr.children[0].classList.add("user-appear");
+        keyboard.classList.remove("type-hidden");
+        keyboard.classList.add("type-appear");
+      } else {
+        if (names.indexOf(name) != -1) {
+          names.splice(index, 1);
+        }
+        typingarr.children[0].classList.remove("user-appear");
+        keyboard.classList.remove("type-appear");
+        keyboard.classList.add("type-hidden");
+
+        // set paragraph textcontent to the updated names array
+        typingarr.children[0].textContent =
+          names.length < 1
+            ? typingarr.children[0].classList.add("user-hide")
+            : names.length > 0 && names.length < 2
+            ? [...names].join("") + " is typing..."
+            : [...names].join(", ") + " are typing...";
+      }
+    });
+  };
+  let sameSender = false; // verify if the sender if you
+  // submit onclick
+  submit.onclick = async(e) => {
+    let ph = await photo;
+    console.log(ph)
+    setTimeout(() => chatbox.scrollTo(0, 1000), 250);
+    sameSender = true;
+    e.preventDefault();
+    if (text.value) {
+      // get existing messages
+      fetch(`/room/${roomname}/${text.value}`)
+        .then((r) => r.json())
+        .then((d) => console.log(d));
+      socket.emit("public_message", text.value, roomname, ph,Date.now());
+      text.value = "";
+    }
+  };
+
+  // append li to chatbox
+  socket.on("send_it", (msg, name, photo, date) => {
+    // if offset equals -60 then the time zone offset is UTC+01
+    let offset = Math.floor(new Date(date).getTimezoneOffset() / 60) * (60*60*1000);
+    let newdate = new Date(date).getTime() - offset
+    let localdate = new Date(newdate).toISOString()
+    let current_time = localdate.split('T')[1].match(/\d+:\d+:\d+/g).join``
+    console.log(current_time)
+    let li = document.createElement("li");
+    let n = document.createElement('text')
+    n.classList.add('text-name')
+    n.textContent = name;
+    let time = document.createElement('time');
+    time.datetime = current_time;
+    time.textContent = current_time;
+    time.classList.add('time-piece')
+    time.classList.add(!sameSender ? 'tp-left' : 'tp-right')
+    let img = document.createElement('img')
+    let p = document.createElement("p");
+    li.classList.add("list-item");
+    p.onclick=e=>{time.classList.add('time-piece-hover')
+    p.classList.add('p-lower')
+    n.classList.add('p-lower')
+    }
+    p.ontouchstart=e=>{time.classList.add('time-piece-hover')
+    p.classList.add('p-lower')
+    n.classList.add('p-lower')
+    }
+    p.onmouseout=e=>{time.classList.remove('time-piece-hover')
+    p.classList.remove('p-lower')
+    n.classList.remove('p-lower')
+
+    }
+    window.ontouchstart = e => {
+      time.classList.remove('time-piece-hover')
+    p.classList.remove('p-lower')
+    n.classList.remove('p-lower')
+    }
+    img.height = "45";
+    img.width = "45";
+    img.style = "border-radius:50%";
+    img.src = `../../../media/${photo}`;
+    img.classList.add('img-margin')
+    li.append(time)
+    li.appendChild(p);
+    li.appendChild(img)
+    li.appendChild(n)
+    if(!sameSender){
+        li.classList.add("left")
+        p.classList.add("p-left")
+        n.classList.add('tp-left')
+      }
+      else{
+        p.classList.add("p-right");
+        li.classList.add("right");
+        n.classList.add('tp-right')
+      }
+    sameSender = false;
+    p.textContent = msg;
+    chatbox.appendChild(li);
+
+    setTimeout(
+      () => chatbox.scrollTo(0, chatbox.scrollHeight - chatbox.clientHeight),
+      250
+    );
+  });
+</script>
