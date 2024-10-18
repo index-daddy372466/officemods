@@ -10,15 +10,14 @@
       // store image into a variable
       // click event
       let animal = $(character).children()[0].src.split('/')[4]
-      console.log(animal)
       // post fetch to server
       $(character).click(function () {
         // basic ajax post object
           $.ajax({
             type:'POST',
-            url:'/char/icon',
+            url:'/module/chatroom/char/icon',
             data:{icon:animal},
-            success:(d=>window.location.href = `${location.origin}/home`),
+            success:(d=>window.location.href = `/module/chatroom/home`),
             fail: function(){
               alert('request failed')
             }

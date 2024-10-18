@@ -1,19 +1,20 @@
-<script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.8.0/socket.io.js">
   // fetch docker api
   // fetch('/numbers')
   //   .then((r) => r.json())
   //   .then((d) => console.log(d.numbers));
+  // import { io } from "https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.8.0/socket.io.js";
 
   let socket = io();
 
   // fetch profile photo by name
   const getProfilePhoto = async (url) => {
-    let response = await fetch("/char/photo")
+    let response = await fetch("/module/chatroom/char/photo")
       .then((r) => r.json())
       .then((d) => d.icon);
     return response;
   };
-  let photo = getProfilePhoto("/char/photo");
+  let photo = getProfilePhoto("/module/chatroom/char/photo");
   
   // declare form & text-input
   let form = document.getElementById("form");
@@ -66,7 +67,7 @@
     socket.on("get_name", async (user) => {
       // fetch for existing chats & append to chatbox
       // get existing messages
-      let chats = await fetch(`/${roomname}/sec/messages`)
+      let chats = await fetch(`/module/chatroom/${roomname}/sec/messages`)
         .then((r) => r.json())
         .then((d) => {
           console.log(d)
@@ -230,21 +231,20 @@
   let sameSender = false; // verify if the sender if you
   // submit onclick
   submit.onclick = async(e) => {
+    e.preventDefault();
+    console.log('subclick')
     let ph = await photo;
-    console.log(ph)
     setTimeout(() => chatbox.scrollTo(0, 1000), 250);
     sameSender = true;
-    e.preventDefault();
     if (text.value) {
       // get existing messages
-      fetch(`/room/${roomname}/${text.value}`)
+      fetch(`/module/chatroom/room/${roomname}/${text.value}`)
         .then((r) => r.json())
         .then((d) => console.log(d));
       socket.emit("public_message", text.value, roomname, ph,Date.now());
       text.value = "";
     }
   };
-
   // append li to chatbox
   socket.on("send_it", (msg, name, photo, date) => {
     // if offset equals -60 then the time zone offset is UTC+01

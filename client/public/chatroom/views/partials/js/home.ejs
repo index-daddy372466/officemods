@@ -18,7 +18,7 @@
 
     // get exisitng rooms
     // fetch existing
-    let existing = await fetch("/rooms/existing")
+    let existing = await fetch("/module/chatroom/rooms/existing")
       .then((r) => r.json())
       .then((d) => d.room);
     if (existing !== "no data") {
@@ -89,7 +89,7 @@
     console.log(value);
     let payload = { room: value };
     // create new room
-    await fetch("/room/create", {
+    await fetch("/module/chatroom/room/create", {
       headers: { "Content-Type": "application/json" },
       method: "POST",
       body: JSON.stringify(payload),
@@ -114,7 +114,7 @@
   async function checkCurseWords(val) {
     // get wiki curse words
     console.log("checking if " + val + " is a curseword...");
-    let curses = await fetch("/words/curse")
+    let curses = await fetch("/module/chatroom/words/curse")
       .then((r) => r.json())
       .then((d) => d.words);
     // get full length of arrays
@@ -137,7 +137,7 @@
     lis.forEach((l, index) => {
       l.onclick = async (e) => {
         let room = l.textContent;
-        return await fetch("/rooms/check", {
+        return await fetch("/module/chatroom/rooms/check", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -149,7 +149,7 @@
             if (!data.data) {
               window.location.reload();
             } else {
-              window.location.href = window.location.origin + `/room/${room}`;
+              window.location.href = window.location.origin + `/module/chatroom/room/${room}`;
             }
           });
       };

@@ -1,20 +1,21 @@
+let path = require("path");
+
 require("dotenv").config();
 let PORT = process.env.PORT || 4447;
 const express = require("express"),
+  fs = require('fs'),
   router = express.Router(),
   habits = require('./lib/habits.js'),
   { Server } = require("socket.io"),
-  httpServer = require('http').createServer(router)
+  httpServer = require('http').createServer(express())
 //   listen on server
-  io = new Server(httpServer);
-  (AXI = !process.env._AXI_ ? 4448 : process.env._AXI_),
-  (path = require("path")),
+io = new Server(httpServer);
+(AXI = !process.env._AXI_ ? 4448 : process.env._AXI_),
   (cors = require("cors")),
   (passport = require("passport")),
   (initializePassport = require("./lib/passport-config.js")),
   (session = require("express-session")),
   (cookieParser = require("cookie-parser")),
-  (fs = require("fs")),
   (MemoryStore = require("memorystore")(session)),
   ({ setMaxListeners } = require("events")),
   (socketIoStart = require("./lib/socketio.js")),
@@ -42,11 +43,11 @@ const checkNotAuthenticated = (req, res, next) => {
 
 const checkIcon = (req, res, next) => {
   if (req.user) {
-    console.log(activeUsers);
-    console.log("checking icon");
-    console.log(req.user);
+    // console.log(activeUsers);
+    // console.log("checking icon");
+    // console.log(req.user);
     let getActive = activeUsers.filter((x) => x.id == req.user.id);
-    console.log(getActive);
+    // console.log(getActive);
     if (getActive[0].hasOwnProperty("icon")) {
       next();
     } else {
@@ -58,7 +59,7 @@ const checkIcon = (req, res, next) => {
 const checkNoIcon = (req, res, next) => {
   // if user is not logged in and not
   if (!req.user) {
-    console.log("user and icon not found. going login");
+    // console.log("user and icon not found. going login");
     res.redirect("/module/chatroom/login");
   }
   // if user is logged in, but does not have an icon set
@@ -66,10 +67,10 @@ const checkNoIcon = (req, res, next) => {
     req.user &&
     !activeUsers.filter((u) => req.user.id === u.id)[0].icon
   ) {
-    console.log("choose a character");
+    // console.log("choose a character");
     next();
   } else {
-    console.log("user & icon is found. going home");
+    // console.log("user & icon is found. going home");
     res.redirect("/module/chatroom/home");
   }
 };
@@ -97,7 +98,7 @@ router.use(cors());
 // router.use("/api/home", createProxyMiddleware({ target: docker + "/api/home" }));
 // router.use("/numbers", createProxyMiddleware({ target: docker + "/api/numbers" }));
 
-router.use(express.static(path.resolve(__dirname, "../client/public")));
+router.use(express.static(path.resolve(__dirname, "../../client/public/chatroom")));
 initializePassport(passport, activeUsers);
 router.use(express.json());
 router.use(cookieParser());
@@ -129,7 +130,7 @@ router.route("/words/curse").get((req, res) => {
 });
 
 router.route("/").get((req, res) => {
-  console.log(habits)
+  // console.log(habits)
   if (req.isAuthenticated()) {
     res.redirect("/module/chatroom/home");
   } else {
@@ -139,7 +140,7 @@ router.route("/").get((req, res) => {
 // home page GET
 router.route("/home").get(checkAuthenticated, (req, res) => {
   habits.home++
-  console.log(habits)
+  // console.log(habits)
   let obj = activeUsers.find((user) => user.id == req.user.id);
   let checkNoIcon = !obj.hasOwnProperty("icon");
   res.render("chatroom/views/home.ejs", {
@@ -147,22 +148,27 @@ router.route("/home").get(checkAuthenticated, (req, res) => {
   });
 });
 
+
 // character selection
-router.route("/char-selection").get(checkNoIcon,(req, res) => {
-  habits.character++
-  console.log(habits)
-  res.render("chatroom/views/character.ejs");
+router.route("/char-selection").get(checkNoIcon, async (req, res) => {
+  const dir = fs.readdirSync(path.resolve(__dirname,'../../client/public/chatroom/media'),{encoding:'utf8'})
+  let files = [...dir].map(f=>{
+    return `/chatroom/media/${f}`
+  })
+  res.render("chatroom/views/character.ejs",{
+    files
+  });
 });
 // test - post animal to a user in activeUsers
 router.route("/char/icon").post(checkNoIcon, (req, res) => {
   const { icon } = req.body;
-  console.log(icon);
+  // console.log(icon);
   try {
     if (req.user) {
-      // console.log(req.user.id)
+      // // console.log(req.user.id)
       activeUsers.find((user) => user.id == req.user.id).icon = icon;
       let curruser = activeUsers.filter((user) => user.id == req.user.id);
-      console.log(curruser);
+      // console.log(curruser);
 
       res.json({ icon: icon });
     }
@@ -174,7 +180,7 @@ router.route("/char/icon").post(checkNoIcon, (req, res) => {
 // icon picture GET
 router.route("/char/photo").get((req, res) => {
   habits.character++
-  console.log(habits)
+  // console.log(habits)
   if (req.user) {
     let obj = activeUsers.find((user) => user.id === req.user.id);
     if (!obj.hasOwnProperty("icon")) {
@@ -190,14 +196,14 @@ router.route("/char/photo").get((req, res) => {
 });
 // login page
 router.route("/login").get(checkNotAuthenticated, (req, res) => {
-  if (req.query.id && (req.query.id===req.user.id)) {
+  if (req.query.id && (req.query.id === req.user.id)) {
     // retrieve id from query object and pass it to id
     id = req.query.id;
     // find the user by id within activeUsers array
     let findUser = activeUsers.find((user) => user.id == id);
     // find the user fucking with your router/system
-    console.log("user in violation");
-    console.log(findUser);
+    // console.log("user in violation");
+    // console.log(findUser);
   }
   res.render("chatroom/views/index.ejs");
 });
@@ -216,45 +222,45 @@ router.get("/logout", checkAuthenticated, (req, res) => {
   // find the user who is fucking with your system (if query exists)
   if (req.query.id) {
     habits.violation.user = req.user.name
-    console.log(habits)
+    // console.log(habits)
     // retrieve id from query object and pass it to id
     id = req.query.id;
     // find the user by id within activeUsers array
     let findUser = activeUsers.find((user) => user.id == id);
     // find the user fucking with your router/system
-    console.log("user in violation");
-    console.log(findUser);
+    // console.log("user in violation");
+    // console.log(findUser);
   }
   for (let i = 0; i < activeUsers.length; i++) {
     if (activeUsers[i].id == user.id) {
-      console.log(activeUsers[i]);
+      // console.log(activeUsers[i]);
       activeUsers.splice(activeUsers.indexOf(activeUsers[i]), 1);
     }
   }
-  console.log("");
-  console.log("remaining active users");
-  console.log(activeUsers);
+  // console.log("");
+  // console.log("remaining active users");
+  // console.log(activeUsers);
   req.logout(() => {
     res.redirect("/module/chatroom/");
   });
 });
 // lockdown
-router.route("/lock1").get(checkNotAuthenticated,(req, res) => {
+router.route("/lock1").get(checkNotAuthenticated, (req, res) => {
   setTimeout(() => httpServer.close(), 750);
   res.render("chatroom/views/lockdown.ejs");
 });
-router.route("/lock2").get(checkAuthenticated,(req, res) => {
+router.route("/lock2").get(checkAuthenticated, (req, res) => {
   // find the user who is fucking with your system (if query exists)
-  if (req.query.id && (req.query.id===req.user.id)) {
+  if (req.query.id && (req.query.id === req.user.id)) {
     habits.violation.user = req.user.name
-    console.log(habits)
+    // console.log(habits)
     // retrieve id from query object and pass it to id
     id = req.query.id;
     // find the user by id within activeUsers array
     let findUser = activeUsers.find((user) => user.id == id);
     // find the user fucking with your router/system
-    console.log("user in violation");
-    console.log(findUser);
+    // console.log("user in violation");
+    // console.log(findUser);
   }
   setTimeout(() => httpServer.close(), 750);
   res.render("chatroom/views/lockdown.ejs");
@@ -279,7 +285,7 @@ router.post("/rooms/check", (req, res) => {
 // clear rooms
 router.route("/room/clear").get(checkAuthenticated, (req, res) => {
   habits.clear++
-  console.log(habits)
+  // console.log(habits)
   rooms = [];
   for (let property in messages) {
     if (messages.hasOwnProperty(property)) {
@@ -291,16 +297,16 @@ router.route("/room/clear").get(checkAuthenticated, (req, res) => {
 // create a room
 router.post("/room/create", checkAuthenticated, (req, res) => {
   habits.create++
-  console.log(habits)
-  console.log(req.body.room);
+  // console.log(habits)
+  // console.log(req.body.room);
   let { room } = req.body;
   messages[room] = [];
-  // console.log("room on post");
-  // console.log(room);
+  // // console.log("room on post");
+  // // console.log(room);
   try {
     if (room && (!rooms.includes(room) || rooms.indexOf(room) == -1)) {
       rooms.push(room);
-      console.log(rooms);
+      // console.log(rooms);
       res.json({ room: rooms });
     } else {
       res.status(404).json({ rooms: undefined });
@@ -312,10 +318,10 @@ router.post("/room/create", checkAuthenticated, (req, res) => {
 router.get(
   "/room/:room",
   checkAuthenticated,
-    checkIcon,
+  checkIcon,
   (req, res) => {
     habits.join++
-    console.log(habits)
+    // console.log(habits)
     if (!rooms.includes(req.params.room)) {
       res
         .status(403)
@@ -330,8 +336,9 @@ router.get(
 // store messages in fake db
 router.get("/room/:room/:message", (req, res) => {
   habits.sendmessage++
-  console.log(habits)
+  // console.log(habits)
   const { room, message } = req.params;
+  console.log(message)
   if (rooms.indexOf(room) == -1) {
     res.send("not a room. </a><br>Go home. <a href='/home'>Home</a>");
   } else {
@@ -368,7 +375,7 @@ router.get("/:room/sec/messages", (req, res) => {
     let obj = {};
     obj[property] = filtered;
     habits.messagesfiltered++
-    console.log(habits)
+    // console.log(habits)
     res.json(obj);
   } else if (rooms.indexOf(room) == -1) {
     res.send("not a room. </a><br>Go home. <a href='/module/chat/home'>Home</a>");
@@ -394,19 +401,19 @@ router.use(function (req, res) {
 
 let endpoints = []
 // middleware to check if a user is going to home from leave (chat)
-function leaveChat(req,res,next){
+function leaveChat(req, res, next) {
   // capture endpoints into array
-endpoints.push(req.path)
-if(endpoints.length >= 3){
-  endpoints.shift();  
-}
-// if([ '/clothes/sec/messages', '/home' ])
-if(/\/sec\/messages$/g.test(endpoints[0]) && /^\/home$/.test(endpoints[1])){
-  habits.leave++
-  console.log(habits)
-}
-console.log(endpoints)
-next();
+  endpoints.push(req.path)
+  if (endpoints.length >= 3) {
+    endpoints.shift();
+  }
+  // if([ '/clothes/sec/messages', '/home' ])
+  if (/\/sec\/messages$/g.test(endpoints[0]) && /^\/home$/.test(endpoints[1])) {
+    habits.leave++
+    // console.log(habits)
+  }
+  // console.log(endpoints)
+  next();
 }
 
 module.exports = router;

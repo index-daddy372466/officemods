@@ -18,15 +18,15 @@
     username.setAttribute('minlength',min)
 
 
-    submitbtn.onclick = async e => {
-      e.preventDefault()
-      const contentObj = {
-        header:{'Content-Type':'application/json'},
-        method:'post',
-        body:JSON.stringify({username: username.value})
-      }
-      await fetch('/module/chatroom/login-attempt',{
-        method:"POST",
-        body:JSON.stringify({username: username.value})})
-    }
+    // submitbtn.onclick = async e => {
+    //   e.preventDefault()
+    //   const contentObj = {
+    //     header:{'Content-Type':'application/json'},
+    //     method:'post',
+    //     body:JSON.stringify({username: username.value})
+    //   }
+    //   await fetch('/module/chatroom/login-attempt',{
+    //     method:"POST",
+    //     body:JSON.stringify({username: username.value})})
+    // }
   </script>
