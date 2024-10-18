@@ -15,6 +15,7 @@ app.use(cors())
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json())
+
 // homepage routing
 app.route('/').get((req,res)=>{
     res.render('index.ejs')

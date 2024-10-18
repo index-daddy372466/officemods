@@ -7,10 +7,13 @@ const express = require("express"),
   router = express.Router(),
   habits = require('./lib/habits.js'),
   { Server } = require("socket.io"),
-  httpServer = require('http').createServer(express())
+  AXI = !process.env._AXI_ ? 4448 : process.env._AXI_,
+  server = express(),
+  httpServer = server.listen(AXI, () => {
+    console.log(`listening on port ${AXI}`);
+  }),
 //   listen on server
 io = new Server(httpServer);
-(AXI = !process.env._AXI_ ? 4448 : process.env._AXI_),
   (cors = require("cors")),
   (passport = require("passport")),
   (initializePassport = require("./lib/passport-config.js")),
@@ -24,7 +27,6 @@ io = new Server(httpServer);
 let messages = {},
   activeUsers = [],
   rooms = [];
-
 const checkAuthenticated = (req, res, next) => {
   if (req.user) {
     next();
@@ -108,10 +110,10 @@ router.use(express.urlencoded({ extended: true }));
 router.use(passport.initialize());
 router.use(passport.session());
 io.engine.use(sessionMiddleware);
-router.use(leaveChat)
 // socket io
 socketIoStart(io);
 
+router.use(leaveChat)
 // read cursewords.json & route
 router.route("/words/curse").get((req, res) => {
   let string = JSON.parse(
@@ -335,6 +337,7 @@ router.get(
 );
 // store messages in fake db
 router.get("/room/:room/:message", (req, res) => {
+  console.log('is this firing?')
   habits.sendmessage++
   // console.log(habits)
   const { room, message } = req.params;

@@ -1,11 +1,5 @@
-<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.8.0/socket.io.js">
-  // fetch docker api
-  // fetch('/numbers')
-  //   .then((r) => r.json())
-  //   .then((d) => console.log(d.numbers));
-  // import { io } from "https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.8.0/socket.io.js";
-
-  let socket = io();
+<script>
+  let socket = io()
 
   // fetch profile photo by name
   const getProfilePhoto = async (url) => {
@@ -16,7 +10,7 @@
   };
   let photo = getProfilePhoto("/module/chatroom/char/photo");
   
-  // declare form & text-input
+  // declare form & text-input 
   let form = document.getElementById("form");
   let text = document.getElementById("text");
   let submit = document.getElementById("submit");
@@ -67,6 +61,7 @@
     socket.on("get_name", async (user) => {
       // fetch for existing chats & append to chatbox
       // get existing messages
+      console.log(user)
       let chats = await fetch(`/module/chatroom/${roomname}/sec/messages`)
         .then((r) => r.json())
         .then((d) => {
@@ -229,9 +224,9 @@
     });
   };
   let sameSender = false; // verify if the sender if you
+  console.log('what the fuck')
   // submit onclick
   submit.onclick = async(e) => {
-    e.preventDefault();
     console.log('subclick')
     let ph = await photo;
     setTimeout(() => chatbox.scrollTo(0, 1000), 250);

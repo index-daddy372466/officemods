@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="#">
     <title><%= room %> room</title>
   </head>
   <%- include('./partials/css/chat.ejs') %>
@@ -38,13 +39,12 @@
     </ul>
 
     <!-- form (chat & send chat) -->
-    <form action="" id="form">
+    <div action="" id="form">
       <input type="text" id="text" />
-      <input type="submit" id="submit" form="form" />
-    </form>
-
+      <button id="submit">Submit</button>
+    </div>
+    <script src="http://localhost:4448/socket.io/socket.io.js"></script>
     <!-- inject clientside io -->
-    <script></script>
     <%- include('./partials/js/chat.ejs') %>
   </body>
 </html>
