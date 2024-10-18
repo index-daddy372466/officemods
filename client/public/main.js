@@ -20,14 +20,14 @@ module_list.forEach((li, idx) => {
     currentMod = li;
     // mouse enter event listener
     currentMod.onmouseenter = (e) => {
-      playbtns[idx].classList.remove('fl-right')
-      prevMessage.classList.add('hide-prev')
-      prevMessage.classList.remove('show-prev-msg')
-      img.classList.remove('hide-prev')
-      let mod = e.currentTarget;
+      const mod = e.currentTarget;
       const text = mod.children[0].textContent.toLowerCase();
       const play = playbtns[idx].parentElement || mod.children[1];
       const arrow = mod.children[1]
+      playbtns[idx].classList.remove('fl-right')
+      prevMessage.classList.add('hide-prev')
+      prevMessage.classList.remove('show-prev-msg')
+      img.parentElement.classList.remove('hide-prev')
       arrow.classList.add('clip-arrow')
       play.classList.add("white-border");
       // while inside li, play-button can be modified
@@ -35,7 +35,7 @@ module_list.forEach((li, idx) => {
         play.classList.remove("white-border");
         play.classList.add("green-border");
         let article = e.target.parentElement;
-        article.href = `/module/${text}`
+        article.href = `/module/${text.replace(/\s/g,'-')}`
         article.target = '_blank'
       };
       play.onmouseleave = (e) => {
@@ -43,7 +43,7 @@ module_list.forEach((li, idx) => {
         play.classList.add("white-border");
       };
       // display image in #preview (associate with li's H1 text-content)
-      const url = `./media/${text}.${/(calculator)/i.test(text)?'gif':'jpg'}`;
+      const url = `./media/${text.replace(/\s/gi,'-')}.${/(calculator|chatroom|scatter plot|notepad)/i.test(text) ? 'gif' : 'jpg'}`;
       img.src = url;
       img.alt = text;
     };
@@ -52,11 +52,11 @@ module_list.forEach((li, idx) => {
       let mod = e.currentTarget;
       const arrow = mod.children[1]
       arrow.classList.remove('clip-arrow')
-        prevMessage.classList.remove('hide-prev')
-        prevMessage.classList.add('show-prev-msg')
+        // prevMessage.classList.remove('hide-prev')
+        // prevMessage.classList.add('show-prev-msg')
         const play = playbtns[idx].parentElement || e.target.children[1];
         play.classList.remove("white-border");
-        img.classList.add('hide-prev')
+        // img.classList.add('hide-prev')
         playbtns[idx].classList.add('fl-right')
       
     };
