@@ -8,8 +8,7 @@ const express = require("express"),
   habits = require('./lib/habits.js'),
   { Server } = require("socket.io"),
   AXI = !process.env._AXI_ ? 4448 : process.env._AXI_,
-  server = express(),
-  httpServer = server.listen(AXI, () => {
+  httpServer = express().listen(AXI, () => {
     console.log(`listening on port ${AXI}`);
   }),
 //   listen on server
