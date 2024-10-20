@@ -23,7 +23,7 @@ app.route('/').get((req,res)=>{
 
 // base routes
 app.use('/module/notepad',require('./routes/notepad.js'))
-app.use('/module/chatroom',require('./routes/chatroom.js'))
+app.use('/module/calculator',require('./routes/calculator.js'))
 
 // scatter plot
 app.route('/module/scatter-plot').get((req,res)=>{

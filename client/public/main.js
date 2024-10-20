@@ -1,4 +1,5 @@
-const title = document.querySelector(".title-header");
+
+      const title = document.querySelector(".title-header");
 const playbtns = document.querySelectorAll(".fl-right");
 const module_list = document.querySelectorAll(".modules-list-item");
 const preview = document.getElementById('preview')
@@ -35,7 +36,6 @@ module_list.forEach((li, idx) => {
         play.classList.remove("white-border");
         play.classList.add("green-border");
         let article = e.target.parentElement;
-        article.href = `/module/${text.replace(/\s/g,'-')}`
         article.target = '_blank'
       };
       play.onmouseleave = (e) => {
@@ -43,7 +43,7 @@ module_list.forEach((li, idx) => {
         play.classList.add("white-border");
       };
       // display image in #preview (associate with li's H1 text-content)
-      const url = `./media/${text.replace(/\s/gi,'-')}.${/(calculator|chatroom|scatter plot|notepad)/i.test(text) ? 'gif' : 'jpg'}`;
+      const url = `./media/${text.replace(/\s/gi,'-')}.gif`;
       img.src = url;
       img.alt = text;
     };
@@ -62,4 +62,3 @@ module_list.forEach((li, idx) => {
     };
   }
 });
-

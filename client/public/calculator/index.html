@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js" integrity="sha512-+k1pnlgt4F1H8L7t3z95o3/KO+o78INEcXTbnoJQ/F2VqDVhWoaiVml/OEHv9HsVgxUaVW+IbiZPUJQfF/YxZw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+</head>
+<body>
+
+    <!-- Wrapper - display: flex -->
+    <div id="wrapper">
+        <div class="cal-container">
+
+            <!-- part1 -->
+             <div class="p1">
+                <!-- indicator container-->
+            <div id="indicator-container">
+                <span class="material-symbols-outlined indicator-off">
+                    arrow_forward_ios
+                </span>
+                <span class="material-symbols-outlined indicator-off">
+                    arrow_forward_ios
+                </span>
+            </div>
+            <!--history container-->
+            <div id="res-eq">
+                <h3 class="result-banner">PAST RESULT</h3>
+                <h3 class="equation-banner">EQUATION</h3>
+            </div>
+            <div id="hisDisplay">
+                <h3 class="hisDisplay-text-res dis-hidden dis"></h3>
+                <h3 class="hisDisplay-text-equation dis-hidden dis"></h3>
+            </div>
+            <!--color choice-->
+            <!-- <div id="exit-container">
+                <h4 class="calc-title">Calculator App</h4>
+                <span class="material-symbols-outlined exit-large">
+                    cancel
+                </span>
+            </div> -->
+            <div id="colors-container">
+                <div class="red color-card up"  style="background:red"></div>
+                <div class="orange color-card up"  style="background:orange"></div>
+                <div class="yellow color-card up"  style="background:yellow"></div>
+                <div class="lime color-card up"  style="background:lime"></div>
+                <div class="blue color-card up"  style="background:blue"></div>
+                <div class="violet color-card up"  style="background:violet"></div>
+                <div class="silver color-card start-color"  style="background:silver"></div>
+                <div class="white color-card up"  style="background:#fff"></div>
+                <div class="black color-card up"  style="background:#000"></div>
+
+            </div>
+             </div>
+            
+
+            <!-- part2 -->
+             <div class="p2">
+                <!--calculator's container-->
+            <div class="cal-actual">
+                <!--clear all results in History (database)-->
+                <span class="btn long-mod clr">CLR</span>
+                <!-- Flex item 1 -->
+                <form action="/equal" method="POST" id="formequal" enctype="multipart/form-data">
+                <div class="cal-display-container">
+                    <input onkeydown="return false;" type="text" name="display" id="display" class="display-actual" autocomplete="off" onclick="return false">
+                </div> 
+                <!-- keypad container  -->
+                <div class="keypad-container">  
+                    <div class="row">
+                        <span id="seven" class="btn">7</span>
+                        <span id="eight" class="btn">8</span>
+                        <span id="nine" class="btn">9</span>
+                        <span id="multiply" class="btn">*</span>
+                    </div>
+                    <div class="row">
+                        <span id="four" class="btn">4</span>
+                        <span id="five" class="btn">5</span>
+                        <span id="six" class="btn">6</span>
+                        <span id="divide" class="btn">/</span>
+                    </div>
+                    <div class="row">
+                        <span id="one" class="btn">1</span>
+                        <span id="two" class="btn">2</span>
+                        <span id="three" class="btn">3</span>
+                        <span id="subtract" class="btn">-</span>
+                    </div>
+                    <div class="row">
+                        <span id="decimal" class="btn">.</span>
+                        <span id="zero" class="btn">0</span>
+                        <span id="clear" class="btn">AC</span>
+                        <span id="add" class="btn">+</span>
+                    </div>
+                    <div class="row end">
+                        <span class="btn long">NEG</span>
+                        <span class="btn long">DELETE</span>
+                        <button type="submit" id="equals" class="btn long">=</button>
+                </form>
+            </div>
+             </div>
+            
+        </div>
+    </div>
+</body>
+<script type="module" src="main.js"></script>
+</html>

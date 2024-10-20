@@ -20,6 +20,17 @@ const pool = {
         // ssl:{
         //     rejectUnauthorized:false,
         // }
+    }),
+    calculator: new Pool({
+        user: process.env.DBU,
+        database: process.env.DB2,
+        password: process.env.PD,
+        port: process.env.DBP,
+        host:process.env.DBH,
+        // ssl:{
+        //     rejectUnauthorized: false,
+        // }
+    
     })
 }
 
