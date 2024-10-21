@@ -8,7 +8,7 @@ const { Sequelize } = require('sequelize')
          logging:false,
         })
         sequalize.sync().then(()=>{
-            console.log('Sequelize: you are connected to notesDB')
+            console.log('Sequelize: you are connected to IntegratedDB')
         }).catch(err=>console.log(err))
         // const sequalize2 = new Sequelize(process.env.C_URI,
         //     {dialect:"sqlite",

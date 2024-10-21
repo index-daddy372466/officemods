@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router()
-const { pool } = require("../db").pool
+const { pool } = require("../db")
 const path = require('path')
 
 router.use(express.static(path.resolve(__dirname,'../../client/public/calculator')))
