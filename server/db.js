@@ -23,7 +23,7 @@ const pool = {
         user: process.env.N_DBU,
         database: process.env.N_DB,
         password: process.env.N_PD,
-        port: process.env.N_DBP,
+        port: process.env.DBP,
         host:process.env.N_DBH,
         ssl:{
             rejectUnauthorized:false,
@@ -33,7 +33,7 @@ const pool = {
         user: process.env.C_DBU,
         database: process.env.C_DB2,
         password: process.env.C_PD,
-        port: process.env.C_DBP,
+        port: process.env.DBP,
         host:process.env.C_DBH,
         ssl:{
             rejectUnauthorized:false,
