@@ -42,8 +42,8 @@ router.route("/notes").post(async (req, res) => {
     if (notes) {
       // encrypt notes
       const encnotesObj = encrypt(notes)
-      await pool.notepad.query("insert into notepad(notes,user_id) values($1,$2)", [encnotesObj,req.session.id]);
-      const getFields = await pool.notepad.query("select * from notepad where user_id = $1",[req.session.id]);
+      await pool.query("insert into notepad(notes,user_id) values($1,$2)", [encnotesObj,req.session.id]);
+      const getFields = await pool.query("select * from notepad where user_id = $1",[req.session.id]);
       const rows = getFields.rows;
       // send notes via json
       res.json({
@@ -66,7 +66,7 @@ router.route("/notes").post(async (req, res) => {
 router.get("/notes", async (req, res) => {
   // alternate ending
   // get all fields
-  const getFields = await pool.notepad.query("select * from notepad where user_id = $1",[req.session.id]);
+  const getFields = await pool.query("select * from notepad where user_id = $1",[req.session.id]);
   const rows = getFields.rows;
   // send notes via json
   res.json({
@@ -84,7 +84,7 @@ router.get("/notes", async (req, res) => {
 router.route("/delete").post(async (req, res) => {
 
   try {
-    await pool.notepad.query(
+    await pool.query(
       "delete from notepad where user_id=$1",[req.session.id]
     );
     res.redirect("/");
@@ -100,7 +100,7 @@ router.get("/delete/:id", async (req, res) => {
       alert("database is empty");
       red.redirect("/");
     } else {
-      await pool.notepad.query("delete from notepad where id=$1", [id]);
+      await pool.query("delete from notepad where id=$1", [id]);
       // console.log("you deleted an item");
       res.redirect("/");
     }
@@ -119,14 +119,14 @@ async function encryptUsers(req, res, next) {
   try{  
     let newId = createId(date,key,salt)
     // check to see if id is already in db
-    let userFound = await pool.notepad.query('select * from users where id = $1',[req.session.id])
+    let userFound = await pool.query('select * from users where id = $1',[req.session.id])
     // collect id(s) found
     let found = userFound.rows
     // console.log(found)
     if(found.length < 1){
         // console.log('no users found')
         req.session.id = newId
-        await pool.notepad.query('insert into users(id) values($1); ',[req.session.id])
+        await pool.query('insert into users(id) values($1); ',[req.session.id])
     }
     else{
       // console.log('user found!')
