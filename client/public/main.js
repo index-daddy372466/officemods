@@ -43,7 +43,7 @@ module_list.forEach((li, idx) => {
         play.classList.add("white-border");
       };
       // display image in #preview (associate with li's H1 text-content)
-      const url = `./media/${text.replace(/\s/gi,'-')}.gif`;
+      const url = `./media/${text.replace(/\s/gi,'-')}.${/sql/ig.test(text)?'jpg' : 'gif'}`;
       img.src = url;
       img.alt = text;
     };

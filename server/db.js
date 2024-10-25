@@ -2,14 +2,16 @@ require('dotenv').config()
 const { Pool } = require('pg')
 const { Sequelize } = require('sequelize')
 
-    const sequalize = new Sequelize(process.env.I_URI,
+    let sequalize = process.env.MDX == 'production' ? new Sequelize(process.env.I_URI,
         {dialect:"sqlite",
          storage:"./database.sqlite",
          logging:false,
-        })
-        sequalize.sync().then(()=>{
-            console.log('Sequelize: you are connected to IntegratedDB')
-        }).catch(err=>console.log(err))
+        }) : null
+        if(sequalize){
+            sequalize.sync().then(()=>{
+                console.log('Sequelize: you are connected to IntegratedDB')
+            }).catch(err=>console.log(err))
+        }
         // const sequalize2 = new Sequelize(process.env.C_URI,
         //     {dialect:"sqlite",
         //      storage:"./database.sqlite",
@@ -42,15 +44,26 @@ const { Sequelize } = require('sequelize')
 //     })
 // }
 
+// const pool = new Pool({
+//     user: process.env.I_DBU,
+//     database: process.env.I_DB,
+//     password: process.env.I_PD,
+//     port: process.env.DBP,
+//     host:process.env.I_DBH,
+//     ssl:{
+//         rejectUnauthorized:false,
+//     }
+
+// })
 const pool = new Pool({
-    user: process.env.I_DBU,
-    database: process.env.I_DB,
-    password: process.env.I_PD,
+    user: process.env.DBU,
+    database: process.env.DB,
+    password: process.env.PD,
     port: process.env.DBP,
-    host:process.env.I_DBH,
-    ssl:{
-        rejectUnauthorized:false,
-    }
+    host:process.env.DBH,
+    // ssl:{
+    //     rejectUnauthorized:false,
+    // }
 
 })
 
