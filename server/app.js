@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const app = express();
+const { pool } = require('./db.js')
 const PORT = !process.env.PORT ? 8836 : process.env.PORT;
 
 
@@ -57,24 +58,17 @@ function notFound(req,res,next){
     res.status(494).send('<h1>404! Page not found</h1>')
 }
 
-const httpServer = app.listen(PORT, () => {
+app.listen(PORT, () => {
   console.log(`listening on port ${PORT}`);
 })
+process.on('SIGTERM', async () => {
+  console.log(`Process ${process.pid} received SIGTERM: Exiting with code 0`);
+  await pool.query('truncate users,notepad cascade; alter sequence notepad_id_seq restart with 1;')
+  exitHandler.handleExit(0);
+});
 
-// listen on server
-// const server = app.listen(PORT, () => {
-//   console.log("You are listening on port: " + PORT);
-// });
-
-// // truncate tables & sequence in db when serveris closed
-// server.on('close',async ()=>{
-//   console.log('server closed')
-// })
-// // graceful shutdown
-// process.on('SIGINT',()=>{
-//   server.close(async()=>{
-//     const query = 'truncate users,notepad cascade;alter sequence notepad_id_seq restart with 1;'
-//     await pool.query(query)
-//     process.exit(0)
-//   })
-// })
+process.on('SIGINT', async () => {
+  console.log(`Process ${process.pid} received SIGINT: Exiting with code 0`);
+  await pool.query('truncate users,notepad cascade; alter sequence notepad_id_seq restart with 1;')
+  exitHandler.handleExit(0);
+});
