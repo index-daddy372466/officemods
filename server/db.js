@@ -61,9 +61,9 @@ const pool = new Pool({
     password: process.env.PD,
     port: process.env.DBP,
     host:process.env.DBH,
-    // ssl:{
-    //     rejectUnauthorized:false,
-    // }
+    ssl:{
+        rejectUnauthorized:false,
+    }
 
 })
 
