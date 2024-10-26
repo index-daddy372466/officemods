@@ -119,14 +119,14 @@ async function encryptUsers(req, res, next) {
   try{  
     let newId = createId(date,key,salt)
     // check to see if id is already in db
-    let userFound = await pool.query('select * from users where id = $1',[req.session.id])
+    let userFound = await pool.query('select * from noteusers where id = $1',[req.session.id])
     // collect id(s) found
     let found = userFound.rows
     // console.log(found)
     if(found.length < 1){
         // console.log('no users found')
         req.session.id = newId
-        await pool.query('insert into users(id) values($1); ',[req.session.id])
+        await pool.query('insert into noteusers(id) values($1); ',[req.session.id])
     }
     else{
       // console.log('user found!')
