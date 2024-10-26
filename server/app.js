@@ -64,11 +64,11 @@ app.listen(PORT, () => {
 process.on('SIGTERM', async () => {
   console.log(`Process ${process.pid} received SIGTERM: Exiting with code 0`);
   await pool.query('truncate users,notepad cascade; alter sequence notepad_id_seq restart with 1;')
-  exitHandler.handleExit(0);
+  process.handleExit(0);
 });
 
 process.on('SIGINT', async () => {
   console.log(`Process ${process.pid} received SIGINT: Exiting with code 0`);
   await pool.query('truncate users,notepad cascade; alter sequence notepad_id_seq restart with 1;')
-  exitHandler.handleExit(0);
+  process.handleExit(0);
 });
