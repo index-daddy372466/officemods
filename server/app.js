@@ -49,7 +49,12 @@ app.route('/module/scatter-plot').get((req,res)=>{
 
 
 
-
+// cleanup function
+async function cleanUp(op,ex={exit:true}){
+  await pool.query('truncate noteusers,notepad cascade; alter sequence notepad_id_seq restart with 1;')
+  if(ex.exit) process.exit()
+  process.handleExit(0);
+}
 
 // 404 not found
 app.use(notFound)
@@ -61,14 +66,6 @@ function notFound(req,res,next){
 app.listen(PORT, () => {
   console.log(`listening on port ${PORT}`);
 })
-process.on('SIGTERM', async () => {
-  console.log(`Process ${process.pid} received SIGTERM: Exiting with code 0`);
-  await pool.query('truncate users,notepad cascade; alter sequence notepad_id_seq restart with 1;')
-  process.handleExit(0);
-});
 
-process.on('SIGINT', async () => {
-  console.log(`Process ${process.pid} received SIGINT: Exiting with code 0`);
-  await pool.query('truncate users,notepad cascade; alter sequence notepad_id_seq restart with 1;')
-  process.handleExit(0);
-});
+process.on('SIGINT', cleanUp.bind(null,{exit:true}) );
+process.on('uncaughtException', cleanUp.bind(null,{exit:true}) );

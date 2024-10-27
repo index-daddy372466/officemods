@@ -26,6 +26,38 @@ SET row_security = off;
 
 ALTER SCHEMA public OWNER TO officemods_user;
 
+--
+-- Name: delete_old_note(); Type: FUNCTION; Schema: public; Owner: officemods_user
+--
+
+CREATE FUNCTION public.delete_old_note() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+begin
+delete from notepad where timestamp < current_timestamp - interval '30 minutes';
+return null;
+end;
+$$;
+
+
+ALTER FUNCTION public.delete_old_note() OWNER TO officemods_user;
+
+--
+-- Name: delete_old_row(); Type: FUNCTION; Schema: public; Owner: officemods_user
+--
+
+CREATE FUNCTION public.delete_old_row() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+begin
+delete from users where timestamp < current_timestamp - interval '30 minutes';
+return null;
+end;
+$$;
+
+
+ALTER FUNCTION public.delete_old_row() OWNER TO officemods_user;
+
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
@@ -44,10 +76,10 @@ CREATE TABLE public.calculator (
 ALTER TABLE public.calculator OWNER TO officemods_user;
 
 --
--- Name: calculator_history_is_seq; Type: SEQUENCE; Schema: public; Owner: officemods_user
+-- Name: calculator_history_id_seq; Type: SEQUENCE; Schema: public; Owner: officemods_user
 --
 
-CREATE SEQUENCE public.calculator_history_is_seq
+CREATE SEQUENCE public.calculator_history_id_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -56,13 +88,13 @@ CREATE SEQUENCE public.calculator_history_is_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.calculator_history_is_seq OWNER TO officemods_user;
+ALTER SEQUENCE public.calculator_history_id_seq OWNER TO officemods_user;
 
 --
--- Name: calculator_history_is_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: officemods_user
+-- Name: calculator_history_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: officemods_user
 --
 
-ALTER SEQUENCE public.calculator_history_is_seq OWNED BY public.calculator.id;
+ALTER SEQUENCE public.calculator_history_id_seq OWNED BY public.calculator.id;
 
 
 --
@@ -102,22 +134,38 @@ ALTER SEQUENCE public.notepad_id_seq OWNED BY public.notepad.id;
 
 
 --
--- Name: users; Type: TABLE; Schema: public; Owner: officemods_user
+-- Name: noteusers; Type: TABLE; Schema: public; Owner: officemods_user
 --
 
-CREATE TABLE public.users (
-    id character varying(60) NOT NULL,
+CREATE TABLE public.noteusers (
+    id character varying(85) NOT NULL,
     "timestamp" timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 );
 
 
-ALTER TABLE public.users OWNER TO officemods_user;
+ALTER TABLE public.noteusers OWNER TO officemods_user;
 
 --
--- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: officemods_user
+-- Name: scores; Type: TABLE; Schema: public; Owner: officemods_user
 --
 
-CREATE SEQUENCE public.users_id_seq
+CREATE TABLE public.scores (
+    score_id integer NOT NULL,
+    best integer NOT NULL,
+    average integer NOT NULL,
+    u_id integer NOT NULL,
+    score integer NOT NULL,
+    level integer
+);
+
+
+ALTER TABLE public.scores OWNER TO officemods_user;
+
+--
+-- Name: scores_score_id_seq; Type: SEQUENCE; Schema: public; Owner: officemods_user
+--
+
+CREATE SEQUENCE public.scores_score_id_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -126,20 +174,56 @@ CREATE SEQUENCE public.users_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.users_id_seq OWNER TO officemods_user;
+ALTER SEQUENCE public.scores_score_id_seq OWNER TO officemods_user;
 
 --
--- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: officemods_user
+-- Name: scores_score_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: officemods_user
 --
 
-ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
+ALTER SEQUENCE public.scores_score_id_seq OWNED BY public.scores.score_id;
+
+
+--
+-- Name: users; Type: TABLE; Schema: public; Owner: officemods_user
+--
+
+CREATE TABLE public.users (
+    user_id integer NOT NULL,
+    display_name character varying(60) NOT NULL,
+    email character varying(60) NOT NULL,
+    password character varying(60) NOT NULL
+);
+
+
+ALTER TABLE public.users OWNER TO officemods_user;
+
+--
+-- Name: users_user_id_seq; Type: SEQUENCE; Schema: public; Owner: officemods_user
+--
+
+CREATE SEQUENCE public.users_user_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.users_user_id_seq OWNER TO officemods_user;
+
+--
+-- Name: users_user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: officemods_user
+--
+
+ALTER SEQUENCE public.users_user_id_seq OWNED BY public.users.user_id;
 
 
 --
 -- Name: calculator id; Type: DEFAULT; Schema: public; Owner: officemods_user
 --
 
-ALTER TABLE ONLY public.calculator ALTER COLUMN id SET DEFAULT nextval('public.calculator_history_is_seq'::regclass);
+ALTER TABLE ONLY public.calculator ALTER COLUMN id SET DEFAULT nextval('public.calculator_history_id_seq'::regclass);
 
 
 --
@@ -150,10 +234,17 @@ ALTER TABLE ONLY public.notepad ALTER COLUMN id SET DEFAULT nextval('public.note
 
 
 --
--- Name: users id; Type: DEFAULT; Schema: public; Owner: officemods_user
+-- Name: scores score_id; Type: DEFAULT; Schema: public; Owner: officemods_user
 --
 
-ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
+ALTER TABLE ONLY public.scores ALTER COLUMN score_id SET DEFAULT nextval('public.scores_score_id_seq'::regclass);
+
+
+--
+-- Name: users user_id; Type: DEFAULT; Schema: public; Owner: officemods_user
+--
+
+ALTER TABLE ONLY public.users ALTER COLUMN user_id SET DEFAULT nextval('public.users_user_id_seq'::regclass);
 
 
 --
@@ -173,18 +264,36 @@ COPY public.notepad (id, notes, user_id, "timestamp") FROM stdin;
 
 
 --
--- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: officemods_user
+-- Data for Name: noteusers; Type: TABLE DATA; Schema: public; Owner: officemods_user
 --
 
-COPY public.users (id, "timestamp") FROM stdin;
+COPY public.noteusers (id, "timestamp") FROM stdin;
+c0af5fa7457cc141f51e1ab575bd74ea5f39978a	2024-10-26 21:54:21.596828
+66c229c040d8bf1e7c388d8b1128a3d7b05141d2	2024-10-26 22:14:37.13739
 \.
 
 
 --
--- Name: calculator_history_is_seq; Type: SEQUENCE SET; Schema: public; Owner: officemods_user
+-- Data for Name: scores; Type: TABLE DATA; Schema: public; Owner: officemods_user
 --
 
-SELECT pg_catalog.setval('public.calculator_history_is_seq', 1, false);
+COPY public.scores (score_id, best, average, u_id, score, level) FROM stdin;
+\.
+
+
+--
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: officemods_user
+--
+
+COPY public.users (user_id, display_name, email, password) FROM stdin;
+\.
+
+
+--
+-- Name: calculator_history_id_seq; Type: SEQUENCE SET; Schema: public; Owner: officemods_user
+--
+
+SELECT pg_catalog.setval('public.calculator_history_id_seq', 1, false);
 
 
 --
@@ -195,10 +304,17 @@ SELECT pg_catalog.setval('public.notepad_id_seq', 1, false);
 
 
 --
--- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: officemods_user
+-- Name: scores_score_id_seq; Type: SEQUENCE SET; Schema: public; Owner: officemods_user
 --
 
-SELECT pg_catalog.setval('public.users_id_seq', 1, false);
+SELECT pg_catalog.setval('public.scores_score_id_seq', 1, false);
+
+
+--
+-- Name: users_user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: officemods_user
+--
+
+SELECT pg_catalog.setval('public.users_user_id_seq', 1, false);
 
 
 --
@@ -218,19 +334,50 @@ ALTER TABLE ONLY public.notepad
 
 
 --
+-- Name: noteusers noteusers_pkey; Type: CONSTRAINT; Schema: public; Owner: officemods_user
+--
+
+ALTER TABLE ONLY public.noteusers
+    ADD CONSTRAINT noteusers_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: scores scores_pkey; Type: CONSTRAINT; Schema: public; Owner: officemods_user
+--
+
+ALTER TABLE ONLY public.scores
+    ADD CONSTRAINT scores_pkey PRIMARY KEY (score_id);
+
+
+--
 -- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: officemods_user
 --
 
 ALTER TABLE ONLY public.users
-    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT users_pkey PRIMARY KEY (user_id);
 
 
 --
--- Name: notepad userfk; Type: FK CONSTRAINT; Schema: public; Owner: officemods_user
+-- Name: notepad trig_delete_old_note; Type: TRIGGER; Schema: public; Owner: officemods_user
+--
+
+CREATE TRIGGER trig_delete_old_note AFTER INSERT ON public.notepad FOR EACH STATEMENT EXECUTE FUNCTION public.delete_old_note();
+
+
+--
+-- Name: notepad notepad_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: officemods_user
 --
 
 ALTER TABLE ONLY public.notepad
-    ADD CONSTRAINT userfk FOREIGN KEY (user_id) REFERENCES public.users(id);
+    ADD CONSTRAINT notepad_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.noteusers(id);
+
+
+--
+-- Name: scores scores_u_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: officemods_user
+--
+
+ALTER TABLE ONLY public.scores
+    ADD CONSTRAINT scores_u_id_fkey FOREIGN KEY (u_id) REFERENCES public.users(user_id);
 
 
 --
