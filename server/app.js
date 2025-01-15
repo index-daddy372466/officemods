@@ -22,31 +22,8 @@ app.route('/').get((req,res)=>{
     res.render('index.ejs')
 })
 
-// base routes
 app.use('/module/notepad',require('./routes/notepad.js'))
 app.use('/module/calculator',require('./routes/calculator.js'))
-
-// scatter plot
-app.route('/module/scatter-plot').get((req,res)=>{
-  console.log('fired endpoint for scatter')
-  try{
-    res.sendFile(require('path').resolve(__dirname,'../scatterplot/index.html'))
-  }
-  catch(err){
-    console.log(err)
-  }
-})
-
-
-
-
-// base routing
-
-
-
-
-
-
 
 
 // cleanup function

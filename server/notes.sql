@@ -22,7 +22,7 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- Name: notepad; Type: TABLE; Schema: public; Owner: Daddy
+-- Name: notepad; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.notepad (
@@ -32,10 +32,10 @@ CREATE TABLE public.notepad (
 );
 
 
-ALTER TABLE public.notepad OWNER TO "Daddy";
+ALTER TABLE public.notepad OWNER TO "postgres";
 
 --
--- Name: notepad_id_seq; Type: SEQUENCE; Schema: public; Owner: Daddy
+-- Name: notepad_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE public.notepad_id_seq
@@ -47,24 +47,24 @@ CREATE SEQUENCE public.notepad_id_seq
     CACHE 1;
 
 
-ALTER SEQUENCE public.notepad_id_seq OWNER TO "Daddy";
+ALTER SEQUENCE public.notepad_id_seq OWNER TO "postgres";
 
 --
--- Name: notepad_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: Daddy
+-- Name: notepad_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
 ALTER SEQUENCE public.notepad_id_seq OWNED BY public.notepad.id;
 
 
 --
--- Name: notepad id; Type: DEFAULT; Schema: public; Owner: Daddy
+-- Name: notepad id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.notepad ALTER COLUMN id SET DEFAULT nextval('public.notepad_id_seq'::regclass);
 
 
 --
--- Data for Name: notepad; Type: TABLE DATA; Schema: public; Owner: Daddy
+-- Data for Name: notepad; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.notepad (id, notes, "timestamp") FROM stdin;
@@ -72,14 +72,14 @@ COPY public.notepad (id, notes, "timestamp") FROM stdin;
 
 
 --
--- Name: notepad_id_seq; Type: SEQUENCE SET; Schema: public; Owner: Daddy
+-- Name: notepad_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
 SELECT pg_catalog.setval('public.notepad_id_seq', 1, false);
 
 
 --
--- Name: notepad notepad_pkey; Type: CONSTRAINT; Schema: public; Owner: Daddy
+-- Name: notepad notepad_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.notepad

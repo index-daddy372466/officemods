@@ -1,10 +1,11 @@
 require("dotenv").config();
-const express = require("express");
+
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const cookieSession = require('cookie-session')
+const express = require("express");
 const router = express.Router();
 const { pool } = require("../db");
-const cookieSession = require('cookie-session')
 const {
   createCipheriv,
   randomBytes,
@@ -20,7 +21,7 @@ router.use(
     secret: process.env.SECRET,
     priority: "medium",
     secure: false,
-    httpOnly: false,
+    httpOnly: true,
   })
 );
 router.use(encryptUsers)
@@ -28,11 +29,8 @@ router.use(cors())
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(express.urlencoded({ extended: true }));
 router.use(express.json());
-// get homepage
-router.route('/').get(async(req,res)=>{
-  console.log(req.session.id)
-  res.render("notepad/index.ejs");
-})
+router.use(express.static(require('path').resolve(__dirname,'../../client/public/notepad')))
+
 // post notes
 router.route("/notes").post(async (req, res) => {
   // identify notes

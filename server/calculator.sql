@@ -21,7 +21,7 @@ SET default_tablespace = '';
 SET default_table_access_method = heap;
 
 --
--- Name: calculator; Type: TABLE; Schema: public; Owner: kylestech95
+-- Name: calculator; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.calculator (
@@ -31,10 +31,10 @@ CREATE TABLE public.calculator (
 );
 
 
-ALTER TABLE public.calculator OWNER TO kylestech95;
+ALTER TABLE public.calculator OWNER TO postgres;
 
 --
--- Name: calculator_history_id_seq; Type: SEQUENCE; Schema: public; Owner: kylestech95
+-- Name: calculator_history_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE public.calculator_history_id_seq
@@ -46,24 +46,24 @@ CREATE SEQUENCE public.calculator_history_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.calculator_history_id_seq OWNER TO kylestech95;
+ALTER TABLE public.calculator_history_id_seq OWNER TO postgres;
 
 --
--- Name: calculator_history_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: kylestech95
+-- Name: calculator_history_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
 ALTER SEQUENCE public.calculator_history_id_seq OWNED BY public.calculator.id;
 
 
 --
--- Name: calculator id; Type: DEFAULT; Schema: public; Owner: kylestech95
+-- Name: calculator id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.calculator ALTER COLUMN id SET DEFAULT nextval('public.calculator_history_id_seq'::regclass);
 
 
 --
--- Data for Name: calculator; Type: TABLE DATA; Schema: public; Owner: kylestech95
+-- Data for Name: calculator; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.calculator (id, result, equation) FROM stdin;
@@ -71,14 +71,14 @@ COPY public.calculator (id, result, equation) FROM stdin;
 
 
 --
--- Name: calculator_history_id_seq; Type: SEQUENCE SET; Schema: public; Owner: kylestech95
+-- Name: calculator_history_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
 SELECT pg_catalog.setval('public.calculator_history_id_seq', 1, false);
 
 
 --
--- Name: calculator calculator_equation_key; Type: CONSTRAINT; Schema: public; Owner: kylestech95
+-- Name: calculator calculator_equation_key; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.calculator
@@ -86,7 +86,7 @@ ALTER TABLE ONLY public.calculator
 
 
 --
--- Name: calculator calculator_pkey; Type: CONSTRAINT; Schema: public; Owner: kylestech95
+-- Name: calculator calculator_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.calculator
